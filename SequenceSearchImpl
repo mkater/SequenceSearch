@@ -1,4 +1,4 @@
-package edu.gcccd.csis;
+//package edu.gcccd.csis;
 
 public class SequenceSearchImpl extends SequenceSearch {
 
@@ -10,17 +10,24 @@ public class SequenceSearchImpl extends SequenceSearch {
     public String[] getAllTaggedSequences() {
       String[] sa1 = new String[0];
       int k = this.content.indexOf(this.startTag);
-      int m = this.content.indexOf(this.endTag);
-      String start = "";
-
-    while (start != "-1") {
+      int m = this.content.indexOf(this.endTag, k+1);
+      if(m == -1 || k == -1)
+      {
+    	  return sa1;
+      }
+      String start = content.substring(k+startTag.length(), m);
+      sa1 = adds(sa1, start);
+      int i = 0;
+      k = this.content.indexOf(this.startTag, m+this.endTag.length());
+      m = this.content.indexOf(this.endTag, k+1);
+      
+    while (k != -1) {
+        start = content.substring(k+startTag.length(), m);
+        sa1 = adds(sa1, start);
+        i++;
         k = this.content.indexOf(this.startTag, m+this.endTag.length());
         m = this.content.indexOf(this.endTag, k+1);
-        start = content.substring(k+startTag.length(), m);
-
-        for (int i = 0; i < start.length(); i++){
-            sa1[0] = start;
-        }
+        
     }
         return sa1;
 
@@ -31,8 +38,12 @@ public class SequenceSearchImpl extends SequenceSearch {
 
         int max = -1;
         int x = 0;
-        //Not sure of next line
-        String[] sa2 = new String[0];
+
+        String[] sa2 = getAllTaggedSequences();
+        if(sa2.length == 0)
+        {
+        	return null;
+        }
         for (int i = 0; i < sa2.length; i++) {
             if (sa2[i].length() >= max) {
                 x = i;
@@ -43,14 +54,20 @@ public class SequenceSearchImpl extends SequenceSearch {
     }
     @Override
     public String displayStringArray() {
-
-        return getAllTaggedSequences().toString();
+    	String retVal = "";
+       String[] sa1 = getAllTaggedSequences();
+       for(int i =0; i < sa1.length; i++)
+       {
+    	   retVal += sa1[i] + " : " + sa1[i].length()+ "\n";
+    	  
+       }
+       System.out.println(retVal);
+       return retVal;
     }
 
     @Override
     public String toString() {
-
-        String s4 = new String("");
+        String s4 = content;
         for (int i = 0; i <s4.length(); i ++){
         s4 = s4.replaceAll(startTag, "");
         s4 = s4.replaceAll((endTag), "");
